@@ -1,0 +1,42 @@
+
+name: Build Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            rid: win-x64
+          - os: ubuntu-20.04
+            rid: linux-x64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install Linux AOT dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang zlib1g-dev
+
+      - name: Publish
+        run: dotnet publish -c Release -r ${{ matrix.rid }} -p:PublishAot=true
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrappy-${{ matrix.rid }}
+          path: bin/Release/net8.0/${{ matrix.rid }}/publish/
+          if-no-files-found: error
