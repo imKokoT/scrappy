@@ -1,5 +1,5 @@
 ﻿
-const string VERSION = "1.0";
+const string VERSION = "1.1";
 const string YEARS = "2026";
 const string AUTHOR = "imKokoT";
 
@@ -63,11 +63,11 @@ return 0;
 
 static string GetPriceInItems(double scrapValue)
 {
-    int roundedValue = (int)Math.Round(scrapValue);
+    double roundedValue = Math.Round(scrapValue * 2) / 2;
 
-    int r = roundedValue / 9;
-    int c = roundedValue % 9 / 3;
-    int s = roundedValue % 3;
+    int r = (int)(roundedValue / 9);
+    int c = (int)(roundedValue % 9 / 3);
+    double s = roundedValue % 3;
 
     return $"{r} ref. {c} rec. {s} scr.";
 }
